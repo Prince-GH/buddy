@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "analysis_window_seconds": 2,
+  "features": {
+    "rms": {
+      "description": "Root-mean-square waveform energy, a rough loudness measure",
+      "unit": "normalized 0..1"
+    },
+    "peak": {
+      "description": "Largest absolute waveform sample in the window",
+      "unit": "normalized 0..1"
+    },
+    "loudnessDbFS": {
+      "description": "RMS level in dBFS",
+      "unit": "dBFS"
+    },
+    "pitchHz": {
+      "description": "Rough autocorrelation estimate when a voiced pitch is detectable",
+      "unit": "Hz",
+      "limitations": "May be null or octave-confused with noise, music, or unvoiced speech"
+    },
+    "zeroCrossingRate": {
+      "description": "Rate at which waveform crosses zero",
+      "unit": "crossings/sample"
+    },
+    "spectralCentroidHz": {
+      "description": "Frequency-weighted spectral brightness estimate",
+      "unit": "Hz"
+    },
+    "dominantFrequencyHz": {
+      "description": "Frequency bin with highest magnitude",
+      "unit": "Hz"
+    },
+    "spectralEnergy": {
+      "description": "Average normalized frequency-bin magnitude",
+      "unit": "normalized"
+    }
+  },
+  "heuristic_rules": [
+    {
+      "if": "rms <= max(0.0055, noiseFloor * 1.9) and peak <= 0.035",
+      "state": "quiet",
+      "expression": "curious"
+    },
+    {
+      "if": "rms > max(0.075, voiceBaseline * 1.22) OR rms/noiseFloor > 6, with sharp spectrum or elevated pitch",
+      "state": "high-energy-sharp",
+      "expression": "angry"
+    },
+    {
+      "if": "rms > 0.10 OR rms/noiseFloor > 7",
+      "state": "very-loud",
+      "expression": "red"
+    },
+    {
+      "if": "rms > max(0.025, voiceBaseline * 1.22) AND (spectralCentroidHz > 1450 OR zeroCrossingRate > 0.105) AND (pitchHz > 145 OR peak > 0.12)",
+      "state": "emphatic",
+      "expression": "angry"
+    },
+    {
+      "if": "pitchHz > 195 AND spectralCentroidHz > 1500 AND rms > 0.018",
+      "state": "bright-animated",
+      "expression": "sparkle"
+    },
+    {
+      "if": "rms < 0.014 AND spectralCentroidHz < 1650",
+      "state": "soft-low-energy",
+      "expression": "small"
+    },
+    {
+      "if": "pitchHz < 115 AND rms > 0.025",
+      "state": "low-pitched",
+      "expression": "downc"
+    },
+    {
+      "if": "zeroCrossingRate > 0.16 AND spectralCentroidHz > 2000",
+      "state": "bright-noisy",
+      "expression": "brows"
+    },
+    {
+      "if": "rms > 0.055",
+      "state": "engaged",
+      "expression": "rectangle"
+    },
+    {
+      "if": "otherwise",
+      "state": "conversational",
+      "expression": "curious"
+    }
+  ],
+  "interpretation_warning": "These are hand-built acoustic interaction heuristics, not validated emotion recognition. Loudness, pitch and spectral brightness do not reliably reveal anger, sadness, confidence, or intent. Calibrate thresholds to the user's microphone and speaking style.",
+  "sampling_interval_ms": 200,
+  "aggregation": "Collects short feature snapshots every 200 ms and aggregates them across a 2-second window (mean RMS/centroid/ZCR/energy, max peak, median detected pitch).",
+  "adaptive_thresholds": {
+    "noiseFloor": "Learns a slow background RMS estimate from low-energy windows; bounded between 0.0015 and 0.018",
+    "voiceBaseline": "Slowly adapts to plausible speech-level RMS windows",
+    "note": "Thresholds are more sensitive than the previous version and should still be calibrated per microphone and environment."
+  },
+  "classifier_notes": "More sensitive prototype thresholds: quiet RMS <0.006; angry-style cue at RMS >=0.035 or RMS/noise-floor ratio >=3.8 plus spectral brightness, zero-crossing rate, peak, or estimated pitch cue; red alert at RMS >=0.085, ratio >=6.5, or peak >=0.32."
+}

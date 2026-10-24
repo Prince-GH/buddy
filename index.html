@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="description" content="Buddy is a voice-reactive robot companion with smooth pointer-following eyes. It does not save audio recordings.">
+  <title>Buddy — Live Voice Companion</title>
+</head>
+<body>
+  <main class="screen" id="screen">
+    <div class="ambient" aria-hidden="true"></div>
+    <section id="robot" class="robot level-silent" aria-label="Buddy, voice-reactive robot">
+      <div class="antenna a1"><i></i></div><div class="antenna a2"><i></i></div>
+      <div class="face-frame">
+        <div class="face">
+          <div id="eyes" class="eyes expression-curious" aria-hidden="true">
+            <span class="eye eye-left"><i></i></span><span class="eye eye-right"><i></i></span>
+            <span class="brow brow-left"></span><span class="brow brow-right"></span>
+            <span class="sparkle s1">✦</span><span class="sparkle s2">✦</span>
+          </div>
+        </div>
+      </div>
+      <div class="side-knob"></div><div class="neck"></div>
+      <div class="body"><span class="chest-light"></span></div>
+      <div class="arm arm-left"></div><div class="arm arm-right"></div>
+      <div class="foot foot-left"></div><div class="foot foot-right"></div>
+      <div class="floor-glow"></div>
+      <div class="tap-ripple" id="tapRipple"></div>
+    </section>
+    <p id="status" class="status-label"></p><p id="error" role="status"></p>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
